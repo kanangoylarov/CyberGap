@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: honeypot-recon
+  namespace: honeypot
+  labels:
+    app: honeypot-recon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: honeypot-recon
+  template:
+    metadata:
+      labels:
+        app: honeypot-recon
+    spec:
+      containers:
+        - name: honeypot
+          image: honeypot:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: HONEYPOT_TYPE
+              value: reconnaissance
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10

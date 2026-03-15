@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-store
+  namespace: honeypot
+  labels:
+    app: postgres-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-store
+  template:
+    metadata:
+      labels:
+        app: postgres-store
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-store-config
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: STORE_POSTGRES_PASSWORD
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - store
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: postgres-store-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: postgres-store-data
+          persistentVolumeClaim:
+            claimName: postgres-store-pvc

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-api-config
+  namespace: honeypot
+data:
+  ADMIN_GATEWAY_DB_URL: postgresql+asyncpg://gateway:gatewaypass@postgres-gateway:5432/gatewaydb

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-store-config
+  namespace: honeypot
+data:
+  POSTGRES_DB: storedb
+  POSTGRES_USER: store

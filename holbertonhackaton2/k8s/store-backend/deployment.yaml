@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-backend
+  namespace: honeypot
+  labels:
+    app: store-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-backend
+  template:
+    metadata:
+      labels:
+        app: store-backend
+    spec:
+      containers:
+        - name: store-backend
+          image: store-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: store-backend-config
+          resources:
+            requests:
+              cpu: 150m
+              memory: 256Mi
+            limits:
+              cpu: 150m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10

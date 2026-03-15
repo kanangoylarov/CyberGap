@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: store-backend-config
+  namespace: honeypot
+data:
+  STORE_DATABASE_URL: postgresql+asyncpg://store:storepass@postgres-store:5432/storedb

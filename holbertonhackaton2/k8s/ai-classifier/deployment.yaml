@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-classifier
+  namespace: honeypot
+  labels:
+    app: ai-classifier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-classifier
+  template:
+    metadata:
+      labels:
+        app: ai-classifier
+    spec:
+      containers:
+        - name: ai-classifier
+          image: ai-classifier:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+            limits:
+              cpu: 300m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10

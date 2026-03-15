@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-frontend
+  namespace: honeypot
+  labels:
+    app: store-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-frontend
+  template:
+    metadata:
+      labels:
+        app: store-frontend
+    spec:
+      containers:
+        - name: store-frontend
+          image: store-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi

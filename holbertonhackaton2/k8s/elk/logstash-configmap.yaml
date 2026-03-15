@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: honeypot
+data:
+  logstash.yml: |
+    http.host: "0.0.0.0"
+    pipeline.workers: 2
+    pipeline.batch.size: 125
+  pipelines.yml: |
+    - pipeline.id: main
+      path.config: "/usr/share/logstash/pipeline/main.conf"
+  main.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+
+    filter {
+      json {
+        source => "message"
+        skip_on_invalid_json => true
+      }
+
+      mutate {
+        add_field => { "[@metadata][index_prefix]" => "app-logs" }
+      }
+
+      if [kubernetes][container][name] =~ "gateway" {
+        mutate {
+          replace => { "[@metadata][index_prefix]" => "gateway-logs" }
+          add_field => { "service" => "gateway" }
+        }
+      } else if [kubernetes][container][name] =~ "honeypot" {
+        mutate {
+          replace => { "[@metadata][index_prefix]" => "honeypot-logs" }
+          add_field => { "service" => "honeypot" }
+        }
+      } else if [kubernetes][container][name] =~ "store" {
+        mutate {
+          replace => { "[@metadata][index_prefix]" => "store-logs" }
+          add_field => { "service" => "store" }
+        }
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch:9200"]
+        index => "%{[@metadata][index_prefix]}-%{+YYYY.MM.dd}"
+      }
+    }

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: honeypot
+data:
+  GATEWAY_REDIS_HOST: redis
+  GATEWAY_REDIS_PORT: "6379"
+  GATEWAY_AI_CLASSIFIER_URL: http://ai-classifier:8000
+  GATEWAY_STORE_BACKEND_HOST: store-backend
+  GATEWAY_GATEWAY_DB_URL: postgresql+asyncpg://gateway:gatewaypass@postgres-gateway:5432/gatewaydb
+  GATEWAY_FINGERPRINT_TTL: "3600"

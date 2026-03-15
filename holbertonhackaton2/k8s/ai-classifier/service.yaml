@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-classifier
+  namespace: honeypot
+  labels:
+    app: ai-classifier
+spec:
+  type: ClusterIP
+  selector:
+    app: ai-classifier
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP

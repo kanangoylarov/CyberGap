@@ -1,0 +1,18 @@
+filebeat.autodiscover:
+  providers:
+    - type: kubernetes
+      node: ${NODE_NAME}
+      templates:
+        - condition:
+            equals:
+              kubernetes.namespace: honeypot
+          config:
+            - type: container
+              paths:
+                - /var/log/containers/*-${data.kubernetes.container.id}.log
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+logging.level: info
+logging.to_files: false

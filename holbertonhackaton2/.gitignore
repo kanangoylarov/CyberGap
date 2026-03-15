@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+store-frontend/dist/
+admin-panel/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment / Secrets
+.env
+.env.*
+k8s/secrets.yaml
+
+# ML model artifacts (large files)
+ai-classifier/ml_models/*.pkl
+ai-classifier/ml_models/*.keras
+ai-classifier/ml_models/*.h5
+ai-classifier/ml_models/*.png
+ai-classifier/ml_models/*.ipynb
+
+# Logs
+*.log
+
+# Docker
+.docker/
+
+# Minikube
+.minikube/

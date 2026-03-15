@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-gateway-config
+  namespace: honeypot
+data:
+  POSTGRES_DB: gatewaydb
+  POSTGRES_USER: gateway
