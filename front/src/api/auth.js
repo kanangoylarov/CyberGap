@@ -1,12 +1,13 @@
 import api from './index';
 
 export const signin = (email, password) =>
-  api.post('/auth/login', { email, password });
+  api.post('/auth/signin', { email, password });
 
-export const signup = async (payload) =>{
-  console.log(payload)
-  const response = await api.post('/auth/signup', payload);
-   console.log(response.data)
-}
-  
+export const signup = (payload) =>
+  api.post('/auth/signup', payload);
 
+export const signout = () =>
+  api.post('/auth/signout');
+
+export const getRole = () =>
+  api.get('/auth/role');

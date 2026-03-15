@@ -20,8 +20,8 @@ export default function QuestionsTab({ responses, openAnswerModal }) {
         page, 
         limit: 10 
       });
-      setQuestions(qData.questions || (Array.isArray(qData) ? qData : []));
-      setTotalPages(qData.totalPages || 1);
+      setQuestions(qData.data || []);
+      setTotalPages(qData.meta?.total ? Math.ceil(qData.meta.total / 10) : 1);
     } catch (err) {
       console.error("Failed to fetch questions", err);
     } finally {
@@ -67,15 +67,15 @@ export default function QuestionsTab({ responses, openAnswerModal }) {
         <>
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
             {questions.map((q) => {
-              const hasAnswered = responses.some(r => r.question_id === q.id);
+              const hasAnswered = responses.some(r => r.questionId === q.id);
               return (
                 <Paper key={q.id} p="md" radius="sm" withBorder style={{ backgroundColor: '#1e293b', borderColor: '#334155', display: 'flex', flexDirection: 'column' }}>
                   <Group justify="space-between" mb="xs">
-                    <Badge color="blue" variant="light">{q.standard_name}</Badge>
+                    <Badge color="blue" variant="light">{q.standardName}</Badge>
                     <Badge color="teal" variant="dot">{q.category}</Badge>
                   </Group>
-                  <Text fw={600} size="sm" mb="xs" c="cyan.4">Clause: {q.clause_number}</Text>
-                  <Text size="sm" style={{ flexGrow: 1 }} mb="md">{q.question_text}</Text>
+                  <Text fw={600} size="sm" mb="xs" c="cyan.4">Clause: {q.clauseNumber}</Text>
+                  <Text size="sm" style={{ flexGrow: 1 }} mb="md">{q.questionText}</Text>
                   
                   <Button 
                     variant={hasAnswered ? "outline" : "light"} 

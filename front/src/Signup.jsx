@@ -34,13 +34,7 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const data = await signup({ 
-        firstname: firstName, 
-        lastname: lastName, 
-        email: email, 
-        company: company, 
-        password: password 
-      });
+      await signup({ firstName, lastName, email, company, password });
 
       // Kayıt başarılı ise login safyasına yönlendir (veya direkt login yap)
       navigate('/login');

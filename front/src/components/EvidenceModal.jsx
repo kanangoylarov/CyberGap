@@ -3,7 +3,7 @@ import { Modal, Title, Stack, Alert, Paper, Text, Radio, Group, Textarea, FileIn
 import { IconAlertCircle, IconUpload } from '@tabler/icons-react';
 import { createResponse } from '../api/responses';
 
-export default function EvidenceModal({ opened, onClose, selectedQuestion, userId, fetchData }) {
+export default function EvidenceModal({ opened, onClose, selectedQuestion, fetchData }) {
   const [answer, setAnswer] = useState('yes');
   const [comment, setComment] = useState('');
   const [file, setFile] = useState(null);
@@ -27,11 +27,10 @@ export default function EvidenceModal({ opened, onClose, selectedQuestion, userI
 
     try {
       const formData = new FormData();
-      formData.append('user_id', userId);
-      formData.append('question_id', selectedQuestion.id);
-      formData.append('answer', answer === 'yes');
+      formData.append('questionId', selectedQuestion.id);
+      formData.append('answer', answer === 'yes' ? 'true' : 'false');
       formData.append('comment', comment);
-      if (file) formData.append('file', file);
+      if (file) formData.append('filePath', file);
 
       await createResponse(formData);
       
@@ -59,8 +58,8 @@ export default function EvidenceModal({ opened, onClose, selectedQuestion, userI
           {submitError && <Alert icon={<IconAlertCircle size={16} />} color="red">{submitError}</Alert>}
           
           <Paper p="xs" withBorder style={{ backgroundColor: '#1e293b', borderColor: '#334155' }}>
-             <Text size="sm" fw={600} c="cyan.4">Clause: {selectedQuestion.clause_number}</Text>
-             <Text size="sm">{selectedQuestion.question_text}</Text>
+             <Text size="sm" fw={600} c="cyan.4">Clause: {selectedQuestion.clauseNumber}</Text>
+             <Text size="sm">{selectedQuestion.questionText}</Text>
           </Paper>
 
           <Radio.Group

@@ -5,7 +5,7 @@ import { createQuestion, deleteQuestion, updateQuestion, getQuestions } from '..
 
 export default function AdminTab({ fetchData }) {
   const [questions, setQuestions] = useState([]);
-  const [newQuestion, setNewQuestion] = useState({ standard_name: '', category: '', clause_number: '', question_text: '' });
+  const [newQuestion, setNewQuestion] = useState({ standardName: '', category: '', clauseNumber: '', questionText: '' });
   const [editingId, setEditingId] = useState(null);
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminMsg, setAdminMsg] = useState({ type: '', text: '' });
@@ -21,12 +21,12 @@ export default function AdminTab({ fetchData }) {
 
   useEffect(() => { loadQuestions(); }, []);
 
-  const standardOptions = [...new Set(['ISO 27001', 'NIST CSF', ...questions.map(q => q.standard_name).filter(Boolean)])];
+  const standardOptions = [...new Set(['ISO 27001', 'NIST CSF', ...questions.map(q => q.standardName).filter(Boolean)])];
   const categoryOptions = [...new Set(['Access Control', 'Network Security', ...questions.map(q => q.category).filter(Boolean)])];
-  const clauseOptions = [...new Set(['4.1', '5.1', ...questions.map(q => q.clause_number).filter(Boolean)])].sort();
+  const clauseOptions = [...new Set(['4.1', '5.1', ...questions.map(q => q.clauseNumber).filter(Boolean)])].sort();
 
   const handleSaveQuestion = async () => {
-    if (!newQuestion.question_text || !newQuestion.standard_name) {
+    if (!newQuestion.questionText || !newQuestion.standardName) {
       setAdminMsg({ type: 'error', text: 'Standard Name and Question Text are required fields.' });
       return;
     }
@@ -41,7 +41,7 @@ export default function AdminTab({ fetchData }) {
         setAdminMsg({ type: 'success', text: 'Question added successfully!' });
       }
       setEditingId(null);
-      setNewQuestion({ standard_name: '', category: '', clause_number: '', question_text: '' });
+      setNewQuestion({ standardName: '', category: '', clauseNumber: '', questionText: '' });
       await loadQuestions();
       await fetchData();
     } catch (err) {
@@ -53,7 +53,7 @@ export default function AdminTab({ fetchData }) {
 
   const handleEdit = (q) => {
     setEditingId(q.id);
-    setNewQuestion({ standard_name: q.standard_name, category: q.category, clause_number: q.clause_number, question_text: q.question_text });
+    setNewQuestion({ standardName: q.standardName, category: q.category, clauseNumber: q.clauseNumber, questionText: q.questionText });
   };
 
   const handleDelete = async (id) => {
@@ -81,8 +81,8 @@ export default function AdminTab({ fetchData }) {
           label="Standard Name" 
           placeholder="Select or type (e.g. ISO 27001)" 
           data={standardOptions}
-          value={newQuestion.standard_name}
-          onChange={(val) => setNewQuestion({...newQuestion, standard_name: val})}
+          value={newQuestion.standardName}
+          onChange={(val) => setNewQuestion({...newQuestion, standardName: val})}
           styles={{ input: { backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }, label: {color: '#f8fafc'} }}
         />
         <Autocomplete 
@@ -96,15 +96,15 @@ export default function AdminTab({ fetchData }) {
         <TextInput 
           label="Clause Number" 
           placeholder="Select or type (e.g. 9.1.1)" 
-          value={newQuestion.clause_number}
-          onChange={(e) => setNewQuestion({...newQuestion, clause_number: e.currentTarget.value})}
+          value={newQuestion.clauseNumber}
+          onChange={(e) => setNewQuestion({...newQuestion, clauseNumber: e.currentTarget.value})}
           styles={{ input: { backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }, label: {color: '#f8fafc'} }}
         />
         <TextInput 
           label="Question Text" 
           placeholder="State the audit requirement..." 
-          value={newQuestion.question_text}
-          onChange={(e) => setNewQuestion({...newQuestion, question_text: e.currentTarget.value})}
+          value={newQuestion.questionText}
+          onChange={(e) => setNewQuestion({...newQuestion, questionText: e.currentTarget.value})}
           styles={{ input: { backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }, label: {color: '#f8fafc'} }}
         />
       </SimpleGrid>
@@ -112,7 +112,7 @@ export default function AdminTab({ fetchData }) {
         <Button onClick={handleSaveQuestion} loading={adminLoading} color="blue">
           {editingId ? 'Update Question' : 'Create Question'}
         </Button>
-        {editingId && <Button variant="subtle" color="gray" onClick={() => { setEditingId(null); setNewQuestion({ standard_name: '', category: '', clause_number: '', question_text: '' }) }}>Cancel</Button>}
+        {editingId && <Button variant="subtle" color="gray" onClick={() => { setEditingId(null); setNewQuestion({ standardName: '', category: '', clauseNumber: '', questionText: '' }) }}>Cancel</Button>}
       </Group>
 
       <Title order={4} mb="sm">Manage Questions</Title>
@@ -128,9 +128,9 @@ export default function AdminTab({ fetchData }) {
         <Table.Tbody>
           {questions.map((q) => (
             <Table.Tr key={q.id}>
-              <Table.Td>{q.standard_name}</Table.Td>
+              <Table.Td>{q.standardName}</Table.Td>
               <Table.Td>{q.category}</Table.Td>
-              <Table.Td>{q.question_text}</Table.Td>
+              <Table.Td>{q.questionText}</Table.Td>
               <Table.Td>
                 <Group gap="xs">
                   <ActionIcon color="blue" onClick={() => handleEdit(q)}><IconEdit size={16} /></ActionIcon>

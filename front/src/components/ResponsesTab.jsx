@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Paper, Title, Loader, Text, Stack, Group, Badge, Button, Collapse } from '@mantine/core';
-import { IconCheck, IconX, IconWand, IconTrash } from '@tabler/icons-react';
+import { IconCheck, IconX, IconWand } from '@tabler/icons-react';
 import { deleteResponse } from '../api/responses';
 import { triggerAiAnalysis, getAiAnalysis } from '../api/analysis';
 
-export default function ResponsesTab({ responses, loading, userId, fetchData }) {
+export default function ResponsesTab({ responses, loading, fetchData }) {
   const [aiData, setAiData] = useState({});
   const [aiLoading, setAiLoading] = useState({});
 
@@ -47,14 +47,14 @@ export default function ResponsesTab({ responses, loading, userId, fetchData }) 
             <Paper key={r.id} p="md" withBorder style={{ backgroundColor: '#1e293b', borderColor: '#334155' }}>
               <Group justify="space-between" align="flex-start">
                 <div style={{ flex: 1 }}>
-                  <Text size="sm" c="dimmed">Question ID: {r.question_id}</Text>
+                  <Text size="sm" c="dimmed">Question ID: {r.questionId}</Text>
                   <Group gap="xs" mt={4}>
                     <Text fw={500}>Compliance:</Text>
                     {r.answer ? <Badge color="green" leftSection={<IconCheck size={12}/>}>Yes</Badge> : <Badge color="red" leftSection={<IconX size={12}/>}>No / Gap</Badge>}
                   </Group>
                   <Text mt="xs" size="sm"><b>Comment:</b> {r.comment || 'N/A'}</Text>
-                  {r.file_path && (
-                    <Text mt="xs" size="sm" c="blue.4" component="a" href={r.file_path} target="_blank">
+                  {r.filePath && (
+                    <Text mt="xs" size="sm" c="blue.4" component="a" href={r.filePath} target="_blank">
                       📄 View Attached Evidence
                     </Text>
                   )}
@@ -65,9 +65,9 @@ export default function ResponsesTab({ responses, loading, userId, fetchData }) 
                        <Paper mt="md" p="sm" withBorder style={{ backgroundColor: '#0f172a', borderColor: '#3b82f6' }}>
                          <Group mb="xs">
                            <IconWand size={16} color="#3b82f6"/>
-                           <Text fw={600} size="sm" c="blue.4">AI Evaluation Score: {aiData[r.id].ai_score}/100</Text>
+                           <Text fw={600} size="sm" c="blue.4">AI Evaluation Score: {aiData[r.id].aiScore}/100</Text>
                          </Group>
-                         <Text size="xs" mb="xs"><b>Gap Analysis:</b> {aiData[r.id].gap_analysis}</Text>
+                         <Text size="xs" mb="xs"><b>Gap Analysis:</b> {aiData[r.id].gapAnalysis}</Text>
                          <Text size="xs"><b>Recommendation:</b> {aiData[r.id].recommendation}</Text>
                        </Paper>
                     )}

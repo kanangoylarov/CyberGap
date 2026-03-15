@@ -14,8 +14,8 @@ export default function UsersTab() {
     setLoading(true);
     try {
       const data = await getUsers({ search, page, limit: 10 });
-      setUsers(data.users || (Array.isArray(data) ? data : []));
-      setTotalPages(data.totalPages || 1);
+      setUsers(data.data || []);
+      setTotalPages(data.meta?.totalPages || 1);
     } catch (err) {
       console.error(err);
     } finally {

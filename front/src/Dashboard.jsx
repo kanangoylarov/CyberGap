@@ -4,8 +4,8 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconAlertCircle, IconFileCheck, IconUsers } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { getQuestions } from './api/questions';
 import { getUserResponses } from './api/responses';
+import { getRole, signout } from './api/auth';
 
 import QuestionsTab from './components/QuestionsTab';
 import ResponsesTab from './components/ResponsesTab';
@@ -15,36 +15,36 @@ import EvidenceModal from './components/EvidenceModal';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  
+
   // Data States
-  const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Modal States
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const userId = localStorage.getItem('userId');
-  const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Admin kontrolü
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
   useEffect(() => {
-    if (!userId) {
+    checkAuthAndFetch();
+  }, []);
+
+  const checkAuthAndFetch = async () => {
+    try {
+      const roleData = await getRole();
+      localStorage.setItem('isAdmin', roleData.role === 'admin' ? 'true' : 'false');
+      await fetchData();
+    } catch {
       navigate('/login');
-      return;
     }
-    fetchData();
-  }, [navigate, userId]);
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [qData, rData] = await Promise.all([
-        getQuestions(),
-        getUserResponses(userId)
-      ]);
-      setQuestions(Array.isArray(qData) ? qData : qData.questions ?? []);
-      setResponses(Array.isArray(rData) ? rData : rData.responses ?? []);
+      const rData = await getUserResponses();
+      setResponses(rData.data || []);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -52,10 +52,9 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('userId');
+  const handleLogout = async () => {
+    try { await signout(); } catch { /* ignore */ }
     localStorage.removeItem('isAdmin');
-    localStorage.removeItem('token');
     navigate('/login');
   };
 
@@ -99,20 +98,17 @@ export default function Dashboard() {
 
           {/* QUESTIONS TAB */}
           <Tabs.Panel value="questions">
-            <QuestionsTab 
-              questions={questions} 
-              responses={responses} 
-              loading={loading} 
-              openAnswerModal={openAnswerModal} 
+            <QuestionsTab
+              responses={responses}
+              openAnswerModal={openAnswerModal}
             />
           </Tabs.Panel>
 
           {/* RESPONSES TAB */}
           <Tabs.Panel value="responses">
-            <ResponsesTab 
-              responses={responses} 
-              loading={loading} 
-              userId={userId}
+            <ResponsesTab
+              responses={responses}
+              loading={loading}
               fetchData={fetchData}
             />
           </Tabs.Panel>
@@ -121,9 +117,8 @@ export default function Dashboard() {
           {isAdmin && (
             <>
               <Tabs.Panel value="admin">
-                <AdminTab 
-                  questions={questions} 
-                  fetchData={fetchData} 
+                <AdminTab
+                  fetchData={fetchData}
                 />
               </Tabs.Panel>
               
@@ -136,12 +131,11 @@ export default function Dashboard() {
       </Container>
 
       {/* SUBMISSION MODAL */}
-      <EvidenceModal 
-        opened={modalOpened} 
-        onClose={() => setModalOpened(false)} 
-        selectedQuestion={selectedQuestion} 
-        userId={userId}
-        fetchData={fetchData} 
+      <EvidenceModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        selectedQuestion={selectedQuestion}
+        fetchData={fetchData}
       />
     </div>
   );

@@ -32,13 +32,13 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const data = await signin(email, password);
+      await signin(email, password);
 
-      // Backend'in donduyu user id-ni ve admin yetkisini saxlayin
-      localStorage.setItem('token', data.token); // Add this for token storage
-      localStorage.setItem('userId', data.user.id);
-      localStorage.setItem('isAdmin', data.user.is_admin || data.user.isAdmin ? 'true' : 'false');
-      navigate('/dashboard'); 
+      // Token cookie ile set ediliyor, role bilgisini alalim
+      const { getRole } = await import('./api/auth');
+      const roleData = await getRole();
+      localStorage.setItem('isAdmin', roleData.role === 'admin' ? 'true' : 'false');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
