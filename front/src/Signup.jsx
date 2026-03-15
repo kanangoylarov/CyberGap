@@ -16,6 +16,7 @@ import {
 import { IconAlertCircle } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 import myLogo from './assets/logo.png'; 
+import { signup } from './api/auth';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -33,28 +34,18 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          first_name: firstName, 
-          last_name: lastName, 
-          email: email, 
-          company: company, 
-          password: password 
-        }),
+      const data = await signup({ 
+        firstname: firstName, 
+        lastname: lastName, 
+        email: email, 
+        company: company, 
+        password: password 
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.user) {
-        // Kayıt başarılı ise login safyasına yönlendir (veya direkt login yap)
-        navigate('/login');
-      } else {
-        setError(data.message || 'Registration failed. Please try again.');
-      }
+      // Kayıt başarılı ise login safyasına yönlendir (veya direkt login yap)
+      navigate('/login');
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

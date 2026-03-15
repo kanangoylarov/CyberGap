@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 
+import { signin } from './api/auth';
 import myLogo from './assets/logo.png'; 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -31,24 +32,15 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await signin(email, password);
 
-      const data = await response.json();
-
-      if (response.ok && data.user) {
-        // Backend'in donduyu user id-ni ve admin yetkisini saxlayin
-        localStorage.setItem('userId', data.user.id);
-        localStorage.setItem('isAdmin', data.user.is_admin || data.user.isAdmin ? 'true' : 'false');
-        navigate('/dashboard'); 
-      } else {
-        setError(data.message || 'Login failed. Please check your credentials.');
-      }
+      // Backend'in donduyu user id-ni ve admin yetkisini saxlayin
+      localStorage.setItem('token', data.token); // Add this for token storage
+      localStorage.setItem('userId', data.user.id);
+      localStorage.setItem('isAdmin', data.user.is_admin || data.user.isAdmin ? 'true' : 'false');
+      navigate('/dashboard'); 
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
