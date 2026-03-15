@@ -6,6 +6,9 @@ import { upload } from "../middlewares/upload.middleware.js";
 
 
 
+router.post("/bulk-submit", AuthMiddleware.protect, AuditController.bulkSubmit);
+router.post("/upload-file/:questionId", AuthMiddleware.protect, upload.single("file"), AuditController.uploadFile);
+
 router.post(
   "/submit",
   AuthMiddleware.protect,

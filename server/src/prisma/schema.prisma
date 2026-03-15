@@ -23,6 +23,7 @@ model User {
   updatedAt    DateTime @updatedAt
 
   responses    AuditResponse[]
+  evaluations  AiEvaluation[]
   @@map("users")
 }
 
@@ -55,6 +56,22 @@ model AuditResponse {
   question    Question @relation(fields: [questionId], references: [id])
 
   @@map("audit_responses")
+}
+
+model AiEvaluation {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  overallScore   Int      @default(0)
+  riskLevel      String?  @db.VarChar(20)
+  summary        String?  @db.Text
+  categoryScores String?  @db.Text     // JSON string of per-category AI scores
+  gaps           String?  @db.Text     // JSON string of gap analysis
+  recommendations String? @db.Text     // JSON string of recommendations
+  fullReport     String?  @db.Text     // Full text-based report from AI
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id])
+  @@map("ai_evaluations")
 }
 
 model AuditResponseLog {

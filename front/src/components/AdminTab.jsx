@@ -13,7 +13,7 @@ export default function AdminTab({ fetchData }) {
   const loadQuestions = async () => {
     try {
       const data = await getQuestions({ limit: 100 });
-      setQuestions(Array.isArray(data) ? data : data.questions || []);
+      setQuestions(data.data || []);
     } catch(err) {
       console.error(err);
     }

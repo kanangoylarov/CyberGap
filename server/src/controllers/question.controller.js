@@ -47,7 +47,40 @@ class QuestionController {
     }
   }
 
-  // 4. Get questions with Search, Filter & Pagination
+  // 4. Get all questions grouped by category (for assessment wizard)
+  static async getAllGrouped(req, res) {
+    try {
+      const userId = req.user.userId;
+
+      const [questions, responses] = await Promise.all([
+        prisma.question.findMany({ orderBy: [{ category: 'asc' }, { clauseNumber: 'asc' }] }),
+        prisma.auditResponse.findMany({
+          where: { userId },
+          select: { questionId: true, answer: true }
+        })
+      ]);
+
+      // Group by category
+      const categories = {};
+      for (const q of questions) {
+        const cat = q.category || 'Uncategorized';
+        if (!categories[cat]) categories[cat] = [];
+        categories[cat].push(q);
+      }
+
+      // Build existing answers map
+      const existingAnswers = {};
+      for (const r of responses) {
+        existingAnswers[r.questionId] = r.answer;
+      }
+
+      return res.status(StatusCodes.OK).json({ categories, existingAnswers });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch grouped questions." });
+    }
+  }
+
+  // 5. Get questions with Search, Filter & Pagination
   static async getQuestions(req, res) {
     try {
       const { search, category, standard, page = 1, limit = 10 } = req.query;

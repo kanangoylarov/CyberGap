@@ -5,7 +5,86 @@ import { supabase } from '../config/supabase.js';
 const prisma = new PrismaClient();
 
 class AuditController {
-  
+
+  // 0. Bulk Submit (for assessment wizard)
+  static async bulkSubmit(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { answers } = req.body;
+
+      if (!Array.isArray(answers) || answers.length === 0) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Answers array is required." });
+      }
+
+      const questionIds = answers.map(a => a.questionId);
+
+      await prisma.$transaction([
+        prisma.auditResponse.deleteMany({ where: { userId, questionId: { in: questionIds } } }),
+        prisma.auditResponse.createMany({
+          data: answers.map(a => ({
+            userId,
+            questionId: a.questionId,
+            answer: a.answer,
+            comment: a.comment || null,
+          }))
+        })
+      ]);
+
+      return res.status(StatusCodes.CREATED).json({ message: "Assessment submitted successfully.", count: answers.length });
+    } catch (error) {
+      console.error("Bulk submit error:", error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to submit assessment." });
+    }
+  }
+
+  // 0.5 Upload file for a specific question response
+  static async uploadFile(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { questionId } = req.params;
+
+      const response = await prisma.auditResponse.findFirst({
+        where: { userId, questionId: parseInt(questionId) }
+      });
+
+      if (!response) {
+        return res.status(StatusCodes.NOT_FOUND).json({ error: "Response not found. Submit answers first." });
+      }
+
+      if (!req.file) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "No file provided." });
+      }
+
+      const file = req.file;
+      const fileExt = file.originalname.split('.').pop();
+      const fileName = `${userId}-${questionId}-${Date.now()}.${fileExt}`;
+      const fullPath = `audits/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('audit_files')
+        .upload(fullPath, file.buffer, { contentType: file.mimetype, upsert: false });
+
+      if (uploadError) {
+        console.error("Supabase upload error:", uploadError);
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "File upload failed." });
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('audit_files')
+        .getPublicUrl(fullPath);
+
+      await prisma.auditResponse.update({
+        where: { id: response.id },
+        data: { filePath: publicUrl }
+      });
+
+      return res.status(StatusCodes.OK).json({ filePath: publicUrl });
+    } catch (error) {
+      console.error("Upload error:", error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Failed to upload file." });
+    }
+  }
+
   // 1. Create/Submit Audit Response
   static async create(req, res) {
     console.log("aaaaaaaaaaaaaa",req.user.userId);

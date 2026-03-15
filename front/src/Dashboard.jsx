@@ -24,7 +24,8 @@ export default function Dashboard() {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [modalOpened, setModalOpened] = useState(false);
 
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  // Admin state
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
 
   useEffect(() => {
     checkAuthAndFetch();
@@ -33,7 +34,9 @@ export default function Dashboard() {
   const checkAuthAndFetch = async () => {
     try {
       const roleData = await getRole();
-      localStorage.setItem('isAdmin', roleData.role === 'admin' ? 'true' : 'false');
+      const admin = roleData.role === 'admin';
+      setIsAdmin(admin);
+      localStorage.setItem('isAdmin', admin ? 'true' : 'false');
       await fetchData();
     } catch {
       navigate('/login');
@@ -72,7 +75,11 @@ export default function Dashboard() {
             <Title order={1} style={{ letterSpacing: '-1px' }}>Heimdall AI</Title>
             <Text c="dimmed">Cybersecurity Compliance Dashboard</Text>
           </div>
-          <Button variant="outline" color="red" onClick={handleLogout}>Log Out</Button>
+          <Group>
+            <Button variant="light" color="cyan" onClick={() => navigate('/assessment')}>Start Assessment</Button>
+            <Button variant="light" color="teal" onClick={() => navigate('/report')}>View Report</Button>
+            <Button variant="outline" color="red" onClick={handleLogout}>Log Out</Button>
+          </Group>
         </Group>
 
         {/* Dashboard Tabs */}
