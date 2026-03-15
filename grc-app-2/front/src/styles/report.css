@@ -1,0 +1,86 @@
+/* ─── REPORT SECTIONS ────────────────────────────────────────────────────── */
+.report-section { margin-bottom: 24px; }
+
+.section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-200); }
+.section-header h3 { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+
+.section-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+
+/* ─── GAP CARDS ──────────────────────────────────────────────────────────── */
+.gap-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
+.gap-card-header { padding: 14px 18px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); display: flex; align-items: flex-start; gap: 12px; }
+.gap-card-body { padding: 20px 18px; }
+.gap-card-body p { font-size: 13px; color: var(--gray-700); line-height: 1.7; margin-bottom: 12px; }
+
+/* ─── EXEC SUMMARY ───────────────────────────────────────────────────────── */
+.exec-summary { background: var(--navy); color: rgba(255,255,255,.9); border-radius: var(--radius-xl); padding: 28px 32px; margin-bottom: 24px; }
+.exec-summary .es-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.exec-summary .es-text { font-size: 14px; line-height: 1.8; margin-bottom: 20px; }
+.exec-summary .es-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); }
+.exec-summary .es-stat-val { font-size: 28px; font-weight: 600; color: #fff; line-height: 1; }
+.exec-summary .es-stat-lbl { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 3px; }
+
+/* ─── RISK SCORE BAR ─────────────────────────────────────────────────────── */
+.score-bar { width: 100%; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+/* ─── ATTACK SCENARIO ────────────────────────────────────────────────────── */
+.attack-card {
+  background: #1A202C;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  color: #E2E8F0;
+}
+.attack-card .attack-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FC8181;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.attack-card .attack-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #CBD5E0;
+}
+.attack-card .attack-meta {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.attack-card .attack-meta span {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+/* ─── RECOMMENDATION BOX ────────────────────────────────────────────────── */
+.rec-box {
+  background: #F0FFF4;
+  border: 1px solid #9AE6B4;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 12px;
+}
+.rec-box .rec-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #276749;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.rec-box p {
+  font-size: 13px;
+  color: #22543D;
+  line-height: 1.7;
+  margin: 0;
+}
